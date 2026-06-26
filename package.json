@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "description": "Repo for practicing playwright",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint . --fix",
+    "format": "prettier --write .",
+    "test:api": "npx playwright test tests/practice1/api.spec.ts",
+    "test:ui": "npx playwright test tests/practice2/ui.spec.ts",
+    "prepare": "husky"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TomiMan7/playwrightPlayground.git"
@@ -17,7 +23,21 @@
   },
   "homepage": "https://github.com/TomiMan7/playwrightPlayground#readme",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.61.1",
-    "@types/node": "^26.0.1"
+    "@types/node": "^26.0.1",
+    "eslint": "^10.5.0",
+    "globals": "^17.7.0",
+    "husky": "^9.1.7",
+    "jiti": "^2.7.0",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.8.5",
+    "typescript-eslint": "^8.62.0"
+  },
+  "lint-staged": {
+    "**/*.{js,ts}": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }

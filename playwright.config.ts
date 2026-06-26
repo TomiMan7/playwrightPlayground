@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { defineConfig, devices } from '@playwright/test';
 
 /**
@@ -20,7 +21,7 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  ...(process.env.CI ? { workers: 1 } : {}),
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -39,6 +40,7 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
 
+    /*
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
@@ -48,6 +50,7 @@ export default defineConfig({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
+    */
 
     /* Test against mobile viewports. */
     // {
