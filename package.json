@@ -1,0 +1,23 @@
+{
+  "name": "playwrightplayground",
+  "version": "1.0.0",
+  "description": "Repo for practicing playwright",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TomiMan7/playwrightPlayground.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/TomiMan7/playwrightPlayground/issues"
+  },
+  "homepage": "https://github.com/TomiMan7/playwrightPlayground#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.0.1"
+  }
+}
