@@ -4,8 +4,11 @@
   "description": "Repo for practicing playwright",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "playwright test",
     "test:api": "npx playwright test tests/practice1/api.spec.ts",
     "test:ui": "npx playwright test tests/practice2/ui.spec.ts",
     "prepare": "husky"

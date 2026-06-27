@@ -1,0 +1,83 @@
+import { APIRequestContext } from '@playwright/test';
+
+const url = 'https://restful-booker.herokuapp.com'; // move to to .env later?
+
+/*
+interface Input {
+    call: string
+    query: Array<string>,
+    adult: string,
+    language: string,
+    page: string
+}
+*/
+
+export const ping = async ({ request }: { request: APIRequestContext }) => {
+  const response = await request.get(url + '/ping');
+  return response;
+};
+
+export const getAllBooking = async ({
+  request,
+}: {
+  request: APIRequestContext;
+}) => {
+  const response = await request.get(url + '/booking');
+  return response;
+};
+
+export const getBookingByName = async (
+  { request }: { request: APIRequestContext },
+  firstName: string,
+  lastName: string
+) => {
+  const response = await request.get(
+    url + `/booking?firstname=${firstName}&lastname=${lastName}`
+  );
+  return response;
+};
+
+export const createBooking = async ({
+  request,
+  firstname = 'Jim',
+  lastname = 'Brown',
+  totalprice = 111,
+  depositpaid = true,
+  checkin = '2018-01-01',
+  checkout = '2019-01-01',
+  additionalneeds = 'Breakfast',
+}: {
+  request: APIRequestContext;
+  firstname?: string;
+  lastname?: string;
+  totalprice?: number;
+  depositpaid?: boolean;
+  checkin?: string;
+  checkout?: string;
+  additionalneeds?: string;
+}) => {
+  const response = await request.post(url + '/booking', {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: {
+      firstname,
+      lastname,
+      totalprice,
+      depositpaid,
+      bookingdates: {
+        checkin,
+        checkout,
+      },
+      additionalneeds,
+    },
+  });
+  return response;
+};
+
+module.exports = {
+  ping,
+  getAllBooking,
+  getBookingByName,
+  createBooking,
+};
