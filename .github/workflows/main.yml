@@ -79,7 +79,8 @@ jobs:
   allure-report:
     name: Generate & Publish Allure Report
     needs: test
-    if: ${{ !cancelled() }}
+    # Only run for main, service, and ui branches
+    if: ${{ !cancelled() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/service' || github.ref == 'refs/heads/ui') }}
     runs-on: ubuntu-latest
     environment:
       name: gh-pages
@@ -101,7 +102,7 @@ jobs:
           path: allure-results
           merge-multiple: true
 
-      # Keep history across runs for trend charts
+      # Keep history across runs for trend charts (per-branch subfolder)
       - name: Load Allure history
         uses: actions/checkout@v4
         continue-on-error: true
@@ -112,8 +113,8 @@ jobs:
       - name: Copy previous history
         run: |
           mkdir -p allure-results/history
-          if [ -d "gh-pages/history" ]; then
-            cp -r gh-pages/history/* allure-results/history/ || true
+          if [ -d "gh-pages/${{ github.ref_name }}/history" ]; then
+            cp -r gh-pages/${{ github.ref_name }}/history/* allure-results/history/ || true
           fi
 
       - name: Install Allure CLI
@@ -125,14 +126,20 @@ jobs:
       - name: Upload Allure report artifact
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
+          name: allure-report-${{ github.ref_name }}
           path: allure-report/
           retention-days: 30
 
-      # --- Publish to GitHub Pages (reporting branch) ---
+      # --- Publish to GitHub Pages (per-branch subfolder) ---
       - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report
+          destination_dir: ${{ github.ref_name }}
+          keep_files: true
+
+      - name: Add report link to summary
+        run: |
+          echo "### 📊 Allure Report" >> $GITHUB_STEP_SUMMARY
+          echo "[View the report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.ref_name }}/)" >> $GITHUB_STEP_SUMMARY
