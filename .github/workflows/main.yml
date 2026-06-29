@@ -76,6 +76,14 @@ jobs:
           path: allure-results/
           retention-days: 30
 
+      - name: Upload Playwright traces
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-${{ matrix.shardIndex }}
+          path: test-results/
+          retention-days: 30
+
   allure-report:
     name: Generate & Publish Allure Report
     needs: test
