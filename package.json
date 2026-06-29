@@ -12,7 +12,7 @@
     "test:api": "npx playwright test tests/practice1/api.spec.ts",
     "test:ui": "npx playwright test tests/practice2/ui.spec.ts",
     "prepare": "husky",
-        "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
     "allure:open": "allure open allure-report"
   },
   "repository": {

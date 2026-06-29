@@ -82,8 +82,7 @@ jobs:
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     environment:
-      name: reporting
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: gh-pages
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -106,14 +105,14 @@ jobs:
         uses: actions/checkout@v4
         continue-on-error: true
         with:
-          ref: reporting
-          path: reporting
+          ref: gh-pages
+          path: gh-pages
 
       - name: Copy previous history
         run: |
           mkdir -p allure-results/history
-          if [ -d "reporting/history" ]; then
-            cp -r reporting/history/* allure-results/history/ || true
+          if [ -d "gh-pages/history" ]; then
+            cp -r gh-pages/history/* allure-results/history/ || true
           fi
 
       - name: Install Allure CLI
