@@ -58,6 +58,14 @@ export const getBookingByName = async (
   return response;
 };
 
+export const getBookingById = async (
+  { request }: { request: APIRequestContext },
+  bookingId: number
+) => {
+  const response = await request.get(url + `/booking/${bookingId}`);
+  return response;
+};
+
 export const createBooking = async ({
   request,
   firstname = 'Jim',
@@ -96,10 +104,74 @@ export const createBooking = async ({
   return response;
 };
 
+export const updateBooking = async ({
+  request,
+  bookingId,
+  token,
+  firstname = 'Jim',
+  lastname = 'Brown',
+  totalprice = 111,
+  depositpaid = true,
+  checkin = '2018-01-01',
+  checkout = '2019-01-01',
+  additionalneeds = 'Breakfast',
+}: {
+  request: APIRequestContext;
+  bookingId: number;
+  token: string;
+  firstname?: string;
+  lastname?: string;
+  totalprice?: number;
+  depositpaid?: boolean;
+  checkin?: string;
+  checkout?: string;
+  additionalneeds?: string;
+}) => {
+  const response = await request.put(url + `/booking/${bookingId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Cookie: `token=${token}`,
+    },
+    data: {
+      firstname,
+      lastname,
+      totalprice,
+      depositpaid,
+      bookingdates: {
+        checkin,
+        checkout,
+      },
+      additionalneeds,
+    },
+  });
+  return response;
+};
+
+export const deleteBooking = async ({
+  request,
+  bookingId,
+  token,
+}: {
+  request: APIRequestContext;
+  bookingId: number;
+  token: string;
+}) => {
+  const response = await request.delete(url + `/booking/${bookingId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Cookie: `token=${token}`,
+    },
+  });
+  return response;
+};
+
 module.exports = {
   ping,
   getAllBooking,
   getBookingByName,
   createBooking,
   createToken,
+  updateBooking,
+  deleteBooking,
+  getBookingById,
 };
