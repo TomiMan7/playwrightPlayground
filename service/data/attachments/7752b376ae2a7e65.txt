@@ -1,0 +1,19 @@
+Response Body: {
+  bookingid: 2608,
+  booking: {
+    firstname: 'idk firstname',
+    lastname: 'idk lastname',
+    totalprice: 77,
+    depositpaid: true,
+    bookingdates: { checkin: '2000-01-01', checkout: '2026-01-01' },
+    additionalneeds: 'idk something'
+  }
+}
+Update Response Body: {
+  firstname: 'updated firstname',
+  lastname: 'updated lastname',
+  totalprice: 77,
+  depositpaid: true,
+  bookingdates: { checkin: '2000-01-01', checkout: '2026-01-01' },
+  additionalneeds: 'updated something'
+}
