@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/auth';
 import {
   ping,
   getAllBooking,
@@ -6,9 +6,7 @@ import {
   createBooking,
 } from '../service-layer/api-service';
 
-import testData from '../test-data/service-test-data.json';
-
-const data = JSON.parse(JSON.stringify(testData));
+import { BookingDataFactory } from '../test-data/booking-data-factory';
 
 test('GET /stuff', async ({ request }) => {
   const response = await ping({ request });
@@ -37,7 +35,12 @@ test('GET /booking by name', async ({ request }) => {
 });
 
 test('POST /booking', async ({ request }) => {
-  const response = await createBooking({ request, ...data.createBooking });
+  const bookingData = BookingDataFactory.createBookingData({
+    firstname: 'ASD',
+    lastname: 'QWE',
+    additionalneeds: 'idk something',
+  });
+  const response = await createBooking({ request, ...bookingData });
   const responseBody = await response.json();
 
   console.log('Response Body:', responseBody); // Log the response body for debugging
@@ -45,4 +48,9 @@ test('POST /booking', async ({ request }) => {
   expect(Object.keys(responseBody)).toContain('bookingid');
   expect(typeof responseBody.bookingid).toBe('number');
   expect(response.status()).toBe(200);
+});
+
+test('use token fixture', async ({ token }) => {
+  console.log('Fixture token:', token);
+  expect(typeof token).toBe('string');
 });

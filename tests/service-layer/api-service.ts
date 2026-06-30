@@ -12,6 +12,27 @@ interface Input {
 }
 */
 
+export const createToken = async ({
+  request,
+  username,
+  password,
+}: {
+  request: APIRequestContext;
+  username: string;
+  password: string;
+}) => {
+  const response = await request.post(url + '/auth', {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: {
+      username,
+      password,
+    },
+  });
+  return response;
+};
+
 export const ping = async ({ request }: { request: APIRequestContext }) => {
   const response = await request.get(url + '/ping');
   return response;
@@ -80,4 +101,5 @@ module.exports = {
   getAllBooking,
   getBookingByName,
   createBooking,
+  createToken,
 };
