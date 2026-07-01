@@ -434,3 +434,4 @@ FodyWeavers.xsd
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+/allure-results/

@@ -11,7 +11,9 @@
     "test": "playwright test",
     "test:api": "npx playwright test tests/practice1/api.spec.ts",
     "test:ui": "npx playwright test tests/practice2/ui.spec.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report"
   },
   "repository": {
     "type": "git",
@@ -27,20 +29,25 @@
   "homepage": "https://github.com/TomiMan7/playwrightPlayground#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@faker-js/faker": "^10.5.0",
     "@playwright/test": "^1.61.1",
     "@types/node": "^26.0.1",
+    "allure-playwright": "^3.10.2",
     "eslint": "^10.5.0",
     "globals": "^17.7.0",
     "husky": "^9.1.7",
     "jiti": "^2.7.0",
     "lint-staged": "^17.0.8",
-    "prettier": "^3.8.5",
+    "prettier": "^3.9.3",
     "typescript-eslint": "^8.62.0"
   },
   "lint-staged": {
-    "**/*.{js,ts}": [
-      "eslint --fix",
-      "git add"
+    "*.{js,ts,jsx,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md,yml,yaml,css,html}": [
+      "prettier --write"
     ]
   }
 }
