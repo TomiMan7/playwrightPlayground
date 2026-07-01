@@ -1,0 +1,13 @@
+[api.spec] Response Body: {
+  bookingid: 2875,
+  booking: {
+    firstname: 'delete firstname',
+    lastname: 'delete lastname',
+    totalprice: 77,
+    depositpaid: true,
+    bookingdates: { checkin: '2000-01-01', checkout: '2026-01-01' },
+    additionalneeds: 'delete something'
+  }
+}
+[api.spec] Delete Response Status: 201
+[api.spec] Get Response Status after deletion: 404
