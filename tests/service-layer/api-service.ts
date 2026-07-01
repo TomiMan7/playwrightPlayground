@@ -1,9 +1,10 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 
 const url = 'https://restful-booker.herokuapp.com'; // move to .env later?
 
 export interface BookingPayload {
-  firstname?: string;
+  firstname?: string | number;
   lastname?: string;
   totalprice?: number;
   depositpaid?: boolean;
@@ -100,13 +101,14 @@ class PlaywrightBookingApiClient implements BookingApiClient {
 
   private buildBookingPayload(payload: BookingPayload) {
     return {
-      firstname: payload.firstname ?? 'Jim',
-      lastname: payload.lastname ?? 'Brown',
-      totalprice: payload.totalprice ?? 111,
+      firstname: payload.firstname ?? faker.person.firstName(),
+      lastname: payload.lastname ?? faker.person.lastName(),
+      totalprice:
+        payload.totalprice ?? faker.number.int({ min: 100, max: 1000 }),
       depositpaid: payload.depositpaid ?? true,
       bookingdates: {
-        checkin: payload.checkin ?? '2018-01-01',
-        checkout: payload.checkout ?? '2019-01-01',
+        checkin: payload.checkin ?? faker.date.past({ years: 1 }),
+        checkout: payload.checkout ?? faker.date.future({ years: 1 }),
       },
       additionalneeds: payload.additionalneeds ?? 'Breakfast',
     };

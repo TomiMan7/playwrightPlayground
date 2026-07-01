@@ -4,6 +4,7 @@ import {
   createBookingApiClient,
   type BookingApiClient,
 } from '../service-layer/api-service';
+import { faker } from '@faker-js/faker';
 
 import { BookingDataFactory } from '../test-data/booking-data-factory';
 
@@ -47,9 +48,9 @@ test.describe('POST API Tests', () => {
   test('POST /booking', async ({ request }) => {
     const api: BookingApiClient = createApiClient(request);
     const bookingData = BookingDataFactory.createBookingData({
-      firstname: 'ASD',
-      lastname: 'QWE',
-      additionalneeds: 'idk something',
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      additionalneeds: faker.string.sample(),
     });
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
@@ -66,9 +67,9 @@ test.describe('PUT API Tests', () => {
   test('PUT /booking', async ({ request, token }) => {
     const api: BookingApiClient = createApiClient(request);
     const bookingData = BookingDataFactory.createBookingData({
-      firstname: 'idk firstname',
-      lastname: 'idk lastname',
-      additionalneeds: 'idk something',
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      additionalneeds: faker.string.sample(),
     });
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
@@ -82,9 +83,9 @@ test.describe('PUT API Tests', () => {
     );
 
     const updatedBookingData = BookingDataFactory.createBookingData({
-      firstname: 'updated firstname',
-      lastname: 'updated lastname',
-      additionalneeds: 'updated something',
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      additionalneeds: faker.string.sample(),
     });
 
     const updateResponse = await api.updateBooking(
@@ -109,9 +110,9 @@ test.describe('DELETE API Tests', () => {
   test('DELETE /booking', async ({ request, token }) => {
     const api: BookingApiClient = createApiClient(request);
     const bookingData = BookingDataFactory.createBookingData({
-      firstname: 'delete firstname',
-      lastname: 'delete lastname',
-      additionalneeds: 'delete something',
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      additionalneeds: faker.string.sample(),
     });
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
@@ -143,9 +144,9 @@ test.describe('NEGATIVE API Tests', () => {
   test('update booking with invalid name', async ({ request, token }) => {
     const api: BookingApiClient = createApiClient(request);
     const bookingData = BookingDataFactory.createBookingData({
-      firstname: 'idk firstname',
-      lastname: 'idk lastname',
-      additionalneeds: 'idk something',
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      additionalneeds: faker.string.sample(),
     });
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
@@ -154,19 +155,19 @@ test.describe('NEGATIVE API Tests', () => {
       responseBody.bookingid,
       token,
       {
-        firstname: '777',
+        firstname: 777,
       }
     );
     logger.info(updateResponse);
-    expect(updateResponse.status()).toBe(200);
+    expect(updateResponse.status()).toBe(500);
   });
 
   test('update booking with invalid token', async ({ request }) => {
     const api: BookingApiClient = createApiClient(request);
     const bookingData = BookingDataFactory.createBookingData({
-      firstname: 'idk firstname',
-      lastname: 'idk lastname',
-      additionalneeds: 'idk something',
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      additionalneeds: faker.string.sample(),
     });
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
@@ -174,7 +175,7 @@ test.describe('NEGATIVE API Tests', () => {
     const updateResponse = await api.updateBooking(
       responseBody.bookingid,
       'invalidToken',
-      { firstname: '777' as unknown as string }
+      {}
     );
     logger.info(updateResponse);
     expect(updateResponse.status()).toBe(403);
@@ -183,9 +184,9 @@ test.describe('NEGATIVE API Tests', () => {
   test('delete booking with invalid token', async ({ request }) => {
     const api: BookingApiClient = createApiClient(request);
     const bookingData = BookingDataFactory.createBookingData({
-      firstname: 'idk firstname',
-      lastname: 'idk lastname',
-      additionalneeds: 'idk something',
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      additionalneeds: faker.string.sample(),
     });
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();

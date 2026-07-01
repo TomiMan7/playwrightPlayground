@@ -1,5 +1,5 @@
 export interface BookingData {
-  firstname: string;
+  firstname: string | number;
   lastname: string;
   totalprice: number;
   depositpaid: boolean;
