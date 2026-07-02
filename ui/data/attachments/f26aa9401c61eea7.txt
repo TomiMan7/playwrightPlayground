@@ -1,0 +1,13 @@
+[api.spec] Response Body: {
+  bookingid: 7210,
+  booking: {
+    firstname: 'Bonnie',
+    lastname: 'Volkman',
+    totalprice: 77,
+    depositpaid: true,
+    bookingdates: { checkin: '2000-01-01', checkout: '2026-01-01' },
+    additionalneeds: 'WqD=lBKz_"'
+  }
+}
+[api.spec] Delete Response Status: 201
+[api.spec] Get Response Status after deletion: 404
