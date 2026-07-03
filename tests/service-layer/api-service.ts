@@ -20,15 +20,8 @@ export interface BookingApiClient {
   getBookingByName(firstName: string, lastName: string): Promise<APIResponse>;
   getBookingById(bookingId: number): Promise<APIResponse>;
   createBooking(payload: BookingPayload): Promise<APIResponse>;
-  updateBooking(
-    bookingId: number,
-    token: string,
-    payload: BookingPayload
-  ): Promise<APIResponse>;
-  deleteBooking(
-    bookingId: number | string,
-    token: string
-  ): Promise<APIResponse>;
+  updateBooking(bookingId: number, token: string, payload: BookingPayload): Promise<APIResponse>;
+  deleteBooking(bookingId: number | string, token: string): Promise<APIResponse>;
 }
 
 class PlaywrightBookingApiClient implements BookingApiClient {
@@ -58,9 +51,7 @@ class PlaywrightBookingApiClient implements BookingApiClient {
   }
 
   async getBookingByName(firstName: string, lastName: string) {
-    return this.request.get(
-      this.baseUrl + `/booking?firstname=${firstName}&lastname=${lastName}`
-    );
+    return this.request.get(this.baseUrl + `/booking?firstname=${firstName}&lastname=${lastName}`);
   }
 
   async getBookingById(bookingId: number) {
@@ -76,11 +67,7 @@ class PlaywrightBookingApiClient implements BookingApiClient {
     });
   }
 
-  async updateBooking(
-    bookingId: number,
-    token: string,
-    payload: BookingPayload
-  ) {
+  async updateBooking(bookingId: number, token: string, payload: BookingPayload) {
     return this.request.put(this.baseUrl + `/booking/${bookingId}`, {
       headers: {
         'Content-Type': 'application/json',
@@ -103,8 +90,7 @@ class PlaywrightBookingApiClient implements BookingApiClient {
     return {
       firstname: payload.firstname ?? faker.person.firstName(),
       lastname: payload.lastname ?? faker.person.lastName(),
-      totalprice:
-        payload.totalprice ?? faker.number.int({ min: 100, max: 1000 }),
+      totalprice: payload.totalprice ?? faker.number.int({ min: 100, max: 1000 }),
       depositpaid: payload.depositpaid ?? true,
       bookingdates: {
         checkin: payload.checkin ?? faker.date.past({ years: 1 }),
@@ -115,19 +101,9 @@ class PlaywrightBookingApiClient implements BookingApiClient {
   }
 }
 
-export const createBookingApiClient = (
-  request: APIRequestContext
-): BookingApiClient => new PlaywrightBookingApiClient(request);
+export const createBookingApiClient = (request: APIRequestContext): BookingApiClient => new PlaywrightBookingApiClient(request);
 
-export const createToken = async ({
-  request,
-  username,
-  password,
-}: {
-  request: APIRequestContext;
-  username: string;
-  password: string;
-}) => {
+export const createToken = async ({ request, username, password }: { request: APIRequestContext; username: string; password: string }) => {
   const client = createBookingApiClient(request);
   return client.createToken(username, password);
 };
@@ -137,28 +113,17 @@ export const ping = async ({ request }: { request: APIRequestContext }) => {
   return client.ping();
 };
 
-export const getAllBooking = async ({
-  request,
-}: {
-  request: APIRequestContext;
-}) => {
+export const getAllBooking = async ({ request }: { request: APIRequestContext }) => {
   const client = createBookingApiClient(request);
   return client.getAllBookings();
 };
 
-export const getBookingByName = async (
-  { request }: { request: APIRequestContext },
-  firstName: string,
-  lastName: string
-) => {
+export const getBookingByName = async ({ request }: { request: APIRequestContext }, firstName: string, lastName: string) => {
   const client = createBookingApiClient(request);
   return client.getBookingByName(firstName, lastName);
 };
 
-export const getBookingById = async (
-  { request }: { request: APIRequestContext },
-  bookingId: number
-) => {
+export const getBookingById = async ({ request }: { request: APIRequestContext }, bookingId: number) => {
   const client = createBookingApiClient(request);
   return client.getBookingById(bookingId);
 };
@@ -187,15 +152,7 @@ export const updateBooking = async ({
   return client.updateBooking(bookingId, token, payload);
 };
 
-export const deleteBooking = async ({
-  request,
-  bookingId,
-  token,
-}: {
-  request: APIRequestContext;
-  bookingId: number | string;
-  token: string;
-}) => {
+export const deleteBooking = async ({ request, bookingId, token }: { request: APIRequestContext; bookingId: number | string; token: string }) => {
   const client = createBookingApiClient(request);
   return client.deleteBooking(bookingId, token);
 };
