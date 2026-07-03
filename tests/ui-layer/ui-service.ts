@@ -1,7 +1,7 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
 import { SignUpData } from '../test-data/ui-sign-up-data-factory';
 
-const url = 'https://automationexercise.com/api';
+const url = 'https://automationexercise.com';
 
 export interface ShoppingPayload extends Partial<SignUpData> {
   name: string;
@@ -18,7 +18,7 @@ export interface ShoppingPayload extends Partial<SignUpData> {
 
 export interface ShoppingApiClient {
   verifyLogin(email: string, password: string): Promise<APIResponse>;
-  addItemToCart(itemId: string): Promise<APIResponse>;
+  addItemToCart(itemId: number): Promise<APIResponse>;
 }
 
 class PlaywrightShoppingApiClient implements ShoppingApiClient {
@@ -28,7 +28,7 @@ class PlaywrightShoppingApiClient implements ShoppingApiClient {
   ) {}
 
   async verifyLogin(email: string, password: string) {
-    return this.request.post(this.baseUrl + '/verifyLogin', {
+    return this.request.post(this.baseUrl + '/api/verifyLogin', {
       form: {
         email,
         password,
@@ -36,7 +36,7 @@ class PlaywrightShoppingApiClient implements ShoppingApiClient {
     });
   }
 
-  async addItemToCart(itemId: string) {
+  async addItemToCart(itemId: number) {
     return this.request.post(this.baseUrl + `/add_to_cart/${itemId}`, {
       form: {
         itemId,
@@ -52,13 +52,14 @@ export const verifyLogin = async ({ request, email, password }: { request: APIRe
   return client.verifyLogin(email, password);
 };
 
-export const addItemToCart = async ({ request, itemId }: { request: APIRequestContext; itemId: string }) => {
+export const addItemToCartViaAPI = async ({ request, itemId }: { request: APIRequestContext; itemId: number }) => {
   const client = createShoppingApiClient(request);
+  console.log(await client.addItemToCart(itemId));
   return client.addItemToCart(itemId);
 };
 
 module.exports = {
   createShoppingApiClient,
   verifyLogin,
-  addItemToCart,
+  addItemToCartViaAPI,
 };
