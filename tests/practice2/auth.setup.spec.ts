@@ -12,9 +12,9 @@ setup('Setup for the auth tests', async ({ page, context }) => {
 
   //UI sign up and login
   await page.goto('https://automationexercise.com/login');
-  await expect(page.getByRole('button', { name: 'Consent' })).toBeVisible();
+  //await expect(page.getByRole('button', { name: 'Consent' })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Consent' }).click();
+  //await page.getByRole('button', { name: 'Consent' }).click();
   await page.getByRole('textbox', { name: 'Name' }).fill(signUpData.name);
   await page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address').fill(signUpData.email);
   await page.getByRole('button', { name: 'Signup' }).click();
