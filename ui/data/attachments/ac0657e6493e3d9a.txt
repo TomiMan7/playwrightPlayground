@@ -1,0 +1,1 @@
+Verification response body: { responseCode: 200, message: 'User exists!' }
