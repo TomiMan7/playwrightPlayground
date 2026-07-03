@@ -1,0 +1,1 @@
+[api.spec] Response Body: { token: 'd235f651b7e1eca' }

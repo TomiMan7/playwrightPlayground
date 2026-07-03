@@ -1,0 +1,19 @@
+[api.spec] Response Body: {
+  bookingid: 4084,
+  booking: {
+    firstname: 'Jammie',
+    lastname: 'Yundt',
+    totalprice: 77,
+    depositpaid: true,
+    bookingdates: { checkin: '2000-01-01', checkout: '2026-01-01' },
+    additionalneeds: '1dT.6l>-#v'
+  }
+}
+[api.spec] Update Response Body: {
+  firstname: 'Byron',
+  lastname: 'Johns',
+  totalprice: 77,
+  depositpaid: true,
+  bookingdates: { checkin: '2000-01-01', checkout: '2026-01-01' },
+  additionalneeds: 'a|UT<$Ycy['
+}
