@@ -17,7 +17,7 @@ test.describe('test', () => {
       password,
     });
     const verificationBody = await verificationResponse.json();
-    console.log('Verification response body:', verificationBody);
+    //console.log('Verification response body:', verificationBody);
 
     expect(verificationBody.responseCode).toBe(200);
     expect(verificationBody.message).toMatch('User exists!');
