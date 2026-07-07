@@ -1,26 +1,30 @@
-import { Page, Locator } from '@playwright/test';
+import { FrameLocator, Page, Locator } from '@playwright/test';
 
 export class ProductsCartPOM {
   readonly page: Page;
 
   private readonly consentButton: Locator;
-  private readonly addToCartButtons: Locator;
-  private readonly continueShoppingButton: Locator;
   private readonly cartLink: Locator;
   private readonly proceedToCheckoutButton: Locator;
-  private readonly removeItemFromCartButton: Locator;
+  private readonly productInfo: Locator;
+  private readonly adFrame: FrameLocator;
+  private readonly closeAdButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
 
     this.consentButton = page.getByRole('button', { name: 'Consent' });
-    this.addToCartButtons = page.getByText('Add to cart');
-    this.continueShoppingButton = page.getByRole('button', {
-      name: 'Continue Shopping',
-    });
     this.cartLink = page.getByRole('link', { name: ' Cart' });
     this.proceedToCheckoutButton = page.getByText('Proceed To Checkout');
-    this.removeItemFromCartButton = page.locator('.cart_quantity_delete');
+    this.productInfo = page.getByText('View Product');
+    this.adFrame = page.frameLocator('iframe[name="aswift_3"]');
+    this.closeAdButton = this.adFrame.getByRole('button', { name: 'Close ad' });
+  }
+
+  async closeAdIfVisible(): Promise<void> {
+    if (await this.closeAdButton.isVisible().catch(() => false)) {
+      await this.closeAdButton.click();
+    }
   }
 
   async gotoProductsPage(): Promise<void> {
@@ -42,9 +46,11 @@ export class ProductsCartPOM {
     }
   }
 
-  async addProductToCart(index: number): Promise<void> {
-    await this.addToCartButtons.nth(index).click();
-    await this.continueShoppingButton.click();
+  async goToProductInfoPageAndCloseAdIfVisible(index: number): Promise<void> {
+    await this.productInfo.nth(index - 1).scrollIntoViewIfNeeded();
+    await this.productInfo.nth(index - 1).waitFor({ state: 'visible' });
+    await this.productInfo.nth(index - 1).click();
+    await this.closeAdIfVisible();
   }
 
   async goToCart(): Promise<void> {
@@ -59,8 +65,10 @@ export class ProductsCartPOM {
     return this.proceedToCheckoutButton;
   }
 
-  async checkRemoveElementAttribute(value: number): Promise<boolean> {
-    const asd = await this.removeItemFromCartButton.getAttribute('data-product-id');
-    return asd === value.toString();
+  async validateCartItem(value: string): Promise<boolean> {
+    return this.page
+      .getByRole('heading', { name: value })
+      .isVisible()
+      .catch(() => false);
   }
 }

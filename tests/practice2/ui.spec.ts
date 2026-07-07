@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { /*addItemToCartViaAPI,*/ verifyLogin } from '../ui-layer/ui-service';
-//import { ProductsCartPOM } from '../pom/product-page';
-//import { faker } from '@faker-js/faker';
+import { ProductsCartPOM } from '../pom/product-page';
+import { faker } from '@faker-js/faker';
+import { ProductInfoPOM } from '../pom/product-detail-page';
+import { CheckoutPagePOM } from '../pom/checkout-page';
 
 test.describe('test', () => {
   test.use({ storageState: '.customerAuth.json' });
@@ -17,7 +19,6 @@ test.describe('test', () => {
       password,
     });
     const verificationBody = await verificationResponse.json();
-    //console.log('Verification response body:', verificationBody);
 
     expect(verificationBody.responseCode).toBe(200);
     expect(verificationBody.message).toMatch('User exists!');
@@ -43,4 +44,31 @@ test.describe('test', () => {
     await expect(productsPage.proceedToCheckout()).toBeVisible();
   });
   */
+
+  test('Add items to cart, via ui, then validate them on the checkout page', async ({ page }) => {
+    const itemId1 = faker.number.int({ min: 2, max: 3 });
+    const itemId2 = faker.number.int({ min: 4, max: 6 });
+
+    const productsPage = new ProductsCartPOM(page);
+    const productInfoPage = new ProductInfoPOM(page);
+    const checkoutPage = new CheckoutPagePOM(page);
+
+    await productsPage.gotoProductsPage();
+    await productsPage.goToProductInfoPageAndCloseAdIfVisible(itemId1);
+    const productName1 = await productInfoPage.addProductToCartAndReturnItsName();
+
+    await productsPage.gotoProductsPage();
+    await productsPage.closeAdIfVisible();
+    await productsPage.goToProductInfoPageAndCloseAdIfVisible(itemId2);
+    const productName2 = await productInfoPage.addProductToCartAndReturnItsName();
+
+    await productsPage.goToCart();
+    await expect(productsPage.proceedToCheckout()).toBeVisible();
+    await productsPage.proceedToCheckout().click();
+
+    expect(await checkoutPage.validateCartItem(productName1 as string)).toBe(true);
+    expect(await checkoutPage.validateCartItem(productName2 as string)).toBe(true);
+    expect(await checkoutPage.returnCartItemQuantity(itemId1, page)).toBe('1');
+    expect(await checkoutPage.returnCartItemQuantity(itemId2, page)).toBe('1');
+  });
 });

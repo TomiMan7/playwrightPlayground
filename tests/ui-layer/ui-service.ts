@@ -54,7 +54,6 @@ export const verifyLogin = async ({ request, email, password }: { request: APIRe
 
 export const addItemToCartViaAPI = async ({ request, itemId }: { request: APIRequestContext; itemId: number }) => {
   const client = createShoppingApiClient(request);
-  console.log(await client.addItemToCart(itemId));
   return client.addItemToCart(itemId);
 };
 
