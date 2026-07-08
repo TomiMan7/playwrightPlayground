@@ -25,7 +25,7 @@ export class ProductInfoPOM {
     return locator.isVisible().catch(() => false);
   }
 
-  async addProductToCartAndReturnItsName(): Promise<string | null> {
+  async addProductToCartAndReturnItsName(): Promise<string> {
     await this.addToCartButton.click();
     await this.continueShoppingButton.click();
 

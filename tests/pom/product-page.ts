@@ -5,7 +5,6 @@ export class ProductsCartPOM {
 
   private readonly consentButton: Locator;
   private readonly cartLink: Locator;
-  private readonly proceedToCheckoutButton: Locator;
   private readonly productInfo: Locator;
   private readonly adFrame: FrameLocator;
   private readonly closeAdButton: Locator;
@@ -15,7 +14,6 @@ export class ProductsCartPOM {
 
     this.consentButton = page.getByRole('button', { name: 'Consent' });
     this.cartLink = page.getByRole('link', { name: ' Cart' });
-    this.proceedToCheckoutButton = page.getByText('Proceed To Checkout');
     this.productInfo = page.getByText('View Product');
     this.adFrame = page.frameLocator('iframe[name="aswift_3"]');
     this.closeAdButton = this.adFrame.getByRole('button', { name: 'Close ad' });
@@ -61,14 +59,9 @@ export class ProductsCartPOM {
     return this.page.getByRole('row', { name });
   }
 
-  proceedToCheckout(): Locator {
-    return this.proceedToCheckoutButton;
-  }
-
-  async validateCartItem(value: string): Promise<boolean> {
-    return this.page
-      .getByRole('heading', { name: value })
-      .isVisible()
-      .catch(() => false);
+  async goToSpecificProductInfoPageAndCloseAdIfVisible(itemId: number): Promise<void> {
+    await this.gotoProductsPage();
+    await this.closeAdIfVisible();
+    await this.goToProductInfoPageAndCloseAdIfVisible(itemId);
   }
 }

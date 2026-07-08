@@ -133,4 +133,10 @@ export class LoginSignUpPOM {
     await this.verifyAndContinue();
     await this.closeAdIfVisible();
   }
+
+  async goToLoginWithoutAuth(isCI: boolean): Promise<void> {
+    await this.gotoLoginPage();
+    await this.handleConsent(isCI);
+    await this.closeAdIfVisible();
+  }
 }
