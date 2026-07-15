@@ -1,57 +1,39 @@
-import type { APIRequestContext } from '@playwright/test';
-import { test, expect } from '../fixtures/auth';
-import {
-  createBookingApiClient,
-  type BookingApiClient,
-} from '../service-layer/api-service';
-import { faker } from '@faker-js/faker';
+import { test, expect } from '../../src/fixtures/auth';
+import { StatusCodes } from 'http-status-codes';
+import { BookingDataFactory } from '../../src/test-data/booking-data-factory';
+import { Logger } from '../../src/utils/logger';
 
-import { BookingDataFactory } from '../test-data/booking-data-factory';
-
-const logger = {
-  info: (...args: unknown[]) => console.warn('[api.spec]', ...args),
-};
-
-const createApiClient = (request: APIRequestContext): BookingApiClient =>
-  createBookingApiClient(request);
+const logger = new Logger('api.spec');
 
 test.describe('GET API Tests', () => {
-  test('GET /ping', async ({ request }) => {
-    const api: BookingApiClient = createApiClient(request);
+  test('GET /ping', async ({ api }) => {
     const response = await api.ping();
 
-    expect(response.status()).toBe(201);
+    expect(response.status()).toBe(StatusCodes.CREATED);
   });
 
-  test('GET /getAllBooking', async ({ request }) => {
-    const api: BookingApiClient = createApiClient(request);
+  test('GET /getAllBooking', async ({ api }) => {
     const response = await api.getAllBookings();
     const responseBody = await response.json();
 
     expect(Object.keys(responseBody[0])[0]).toBe('bookingid');
     expect(typeof Object.keys(responseBody[0])[0]).toBe('string');
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(StatusCodes.OK);
   });
 
-  test('GET /get booking by name', async ({ request }) => {
-    const api: BookingApiClient = createApiClient(request);
+  test('GET /get booking by name', async ({ api }) => {
     const response = await api.getBookingByName('sally', 'brown');
     const responseBody = await response.json();
 
     logger.info('Response Body:', responseBody);
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(StatusCodes.OK);
   });
 });
 
 test.describe('POST API Tests', () => {
-  test('POST /booking', async ({ request }) => {
-    const api: BookingApiClient = createApiClient(request);
-    const bookingData = BookingDataFactory.createBookingData({
-      firstname: faker.person.firstName(),
-      lastname: faker.person.lastName(),
-      additionalneeds: faker.string.sample(),
-    });
+  test('POST /booking', async ({ api, token }) => {
+    const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
 
@@ -59,18 +41,19 @@ test.describe('POST API Tests', () => {
 
     expect(Object.keys(responseBody)).toContain('bookingid');
     expect(typeof responseBody.bookingid).toBe('number');
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(StatusCodes.OK);
+
+    const deleteResponse = await api.deleteBooking(
+      responseBody.bookingid,
+      token
+    );
+    expect(deleteResponse.status()).toBe(StatusCodes.CREATED); //cleaning up
   });
 });
 
 test.describe('PUT API Tests', () => {
-  test('PUT /booking', async ({ request, token }) => {
-    const api: BookingApiClient = createApiClient(request);
-    const bookingData = BookingDataFactory.createBookingData({
-      firstname: faker.person.firstName(),
-      lastname: faker.person.lastName(),
-      additionalneeds: faker.string.sample(),
-    });
+  test('PUT /booking', async ({ api, token }) => {
+    const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
 
@@ -79,14 +62,10 @@ test.describe('PUT API Tests', () => {
     expect(responseBody.booking.firstname).toBe(bookingData.firstname);
     expect(responseBody.booking.lastname).toBe(bookingData.lastname);
     expect(responseBody.booking.additionalneeds).toBe(
-      bookingData.additionalneeds
+      bookingData.additionalNeeds
     );
 
-    const updatedBookingData = BookingDataFactory.createBookingData({
-      firstname: faker.person.firstName(),
-      lastname: faker.person.lastName(),
-      additionalneeds: faker.string.sample(),
-    });
+    const updatedBookingData = BookingDataFactory.createBookingData();
 
     const updateResponse = await api.updateBooking(
       responseBody.bookingid,
@@ -100,20 +79,21 @@ test.describe('PUT API Tests', () => {
     expect(updateResponseBody.firstname).toBe(updatedBookingData.firstname);
     expect(updateResponseBody.lastname).toBe(updatedBookingData.lastname);
     expect(updateResponseBody.additionalneeds).toBe(
-      updatedBookingData.additionalneeds
+      updatedBookingData.additionalNeeds
     );
-    expect(updateResponse.status()).toBe(200);
+    expect(updateResponse.status()).toBe(StatusCodes.OK);
+
+    const deleteResponse = await api.deleteBooking(
+      responseBody.bookingid,
+      token
+    );
+    expect(deleteResponse.status()).toBe(StatusCodes.CREATED); //cleaning up
   });
 });
 
 test.describe('DELETE API Tests', () => {
-  test('DELETE /booking', async ({ request, token }) => {
-    const api: BookingApiClient = createApiClient(request);
-    const bookingData = BookingDataFactory.createBookingData({
-      firstname: faker.person.firstName(),
-      lastname: faker.person.lastName(),
-      additionalneeds: faker.string.sample(),
-    });
+  test('DELETE /booking', async ({ api, token }) => {
+    const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
 
@@ -122,7 +102,7 @@ test.describe('DELETE API Tests', () => {
     expect(responseBody.booking.firstname).toBe(bookingData.firstname);
     expect(responseBody.booking.lastname).toBe(bookingData.lastname);
     expect(responseBody.booking.additionalneeds).toBe(
-      bookingData.additionalneeds
+      bookingData.additionalNeeds
     );
 
     const deleteResponse = await api.deleteBooking(
@@ -132,22 +112,17 @@ test.describe('DELETE API Tests', () => {
 
     logger.info('Delete Response Status:', deleteResponse.status());
 
-    expect(deleteResponse.status()).toBe(201);
+    expect(deleteResponse.status()).toBe(StatusCodes.CREATED);
 
     const getResponse = await api.getBookingById(responseBody.bookingid);
     logger.info('Get Response Status after deletion:', getResponse.status());
-    expect(getResponse.status()).toBe(404); // Expecting 404 Not Found after deletion
+    expect(getResponse.status()).toBe(StatusCodes.NOT_FOUND);
   });
 });
 
 test.describe('NEGATIVE API Tests', () => {
-  test('update booking with invalid name', async ({ request, token }) => {
-    const api: BookingApiClient = createApiClient(request);
-    const bookingData = BookingDataFactory.createBookingData({
-      firstname: faker.person.firstName(),
-      lastname: faker.person.lastName(),
-      additionalneeds: faker.string.sample(),
-    });
+  test('update booking with invalid name', async ({ api, token }) => {
+    const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
 
@@ -155,20 +130,21 @@ test.describe('NEGATIVE API Tests', () => {
       responseBody.bookingid,
       token,
       {
-        firstname: 777,
+        firstname: 777 as unknown as string,
       }
     );
     logger.info(updateResponse);
-    expect(updateResponse.status()).toBe(500);
+    expect(updateResponse.status()).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
+
+    const deleteResponse = await api.deleteBooking(
+      responseBody.bookingid,
+      token
+    );
+    expect(deleteResponse.status()).toBe(StatusCodes.CREATED); //cleaning up
   });
 
-  test('update booking with invalid token', async ({ request }) => {
-    const api: BookingApiClient = createApiClient(request);
-    const bookingData = BookingDataFactory.createBookingData({
-      firstname: faker.person.firstName(),
-      lastname: faker.person.lastName(),
-      additionalneeds: faker.string.sample(),
-    });
+  test('update booking with invalid token', async ({ api, token }) => {
+    const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
 
@@ -178,16 +154,17 @@ test.describe('NEGATIVE API Tests', () => {
       {}
     );
     logger.info(updateResponse);
-    expect(updateResponse.status()).toBe(403);
+    expect(updateResponse.status()).toBe(StatusCodes.FORBIDDEN);
+
+    const deleteResponse = await api.deleteBooking(
+      responseBody.bookingid,
+      token
+    );
+    expect(deleteResponse.status()).toBe(StatusCodes.CREATED); //cleaning up
   });
 
-  test('delete booking with invalid token', async ({ request }) => {
-    const api: BookingApiClient = createApiClient(request);
-    const bookingData = BookingDataFactory.createBookingData({
-      firstname: faker.person.firstName(),
-      lastname: faker.person.lastName(),
-      additionalneeds: faker.string.sample(),
-    });
+  test('delete booking with invalid token', async ({ api, token }) => {
+    const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
 
@@ -196,13 +173,21 @@ test.describe('NEGATIVE API Tests', () => {
       'invalidToken'
     );
     logger.info(deleteResponse);
-    expect(deleteResponse.status()).toBe(403);
+    expect(deleteResponse.status()).toBe(StatusCodes.FORBIDDEN);
+
+    const deleteResponse2 = await api.deleteBooking(
+      responseBody.bookingid,
+      token
+    );
+    expect(deleteResponse2.status()).toBe(StatusCodes.CREATED); //cleaning up
   });
 
-  test('delete booking with invalid id', async ({ request, token }) => {
-    const api: BookingApiClient = createApiClient(request);
-    const deleteResponse = await api.deleteBooking('asd', token);
+  test('delete booking with invalid id', async ({ api, token }) => {
+    const deleteResponse = await api.deleteBooking(
+      'asd' as unknown as number,
+      token
+    );
     logger.info(deleteResponse);
-    expect(deleteResponse.status()).toBe(405);
+    expect(deleteResponse.status()).toBe(StatusCodes.METHOD_NOT_ALLOWED);
   });
 });
