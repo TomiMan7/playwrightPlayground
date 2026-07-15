@@ -1,5 +1,5 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
-import { SignUpData } from '../../src/test-data/ui-sign-up-data-factory';
+import { SignUpData } from '../test-data/ui-sign-up-data-factory';
 
 const url = 'https://automationexercise.com';
 
