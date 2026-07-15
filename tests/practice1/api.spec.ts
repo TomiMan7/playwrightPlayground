@@ -1,6 +1,6 @@
 import type { APIRequestContext } from '@playwright/test';
-import { test, expect } from '../fixtures/auth';
-import { createBookingApiClient, type BookingApiClient } from '../service-layer/api-service';
+import { test, expect } from '../../src/fixtures/auth';
+import { createBookingApiClient, type BookingApiClient } from '../../src/api/api-service';
 import { faker } from '@faker-js/faker';
 
 import { BookingDataFactory } from '../test-data/booking-data-factory';

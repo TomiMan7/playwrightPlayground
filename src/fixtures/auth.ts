@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import { createToken } from '../service-layer/api-service';
+import { createToken } from '../api/api-service';
 
 type Fixtures = { token: string };
 
