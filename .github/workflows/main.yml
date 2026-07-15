@@ -44,6 +44,10 @@ jobs:
     name: Test (Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     needs: lint-and-format
     runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ secrets.API_URL }}
+      API_USERNAME: ${{ secrets.API_USERNAME }}
+      API_PASSWORD: ${{ secrets.API_PASSWORD }}
     strategy:
       fail-fast: false
       matrix:
