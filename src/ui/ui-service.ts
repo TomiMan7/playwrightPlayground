@@ -1,18 +1,18 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
 import { SignUpData } from '../test-data/ui-sign-up-data-factory';
 
-const url = 'https://automationexercise.com';
+const url = process.env.UI_URL;
 
 export interface ShoppingPayload extends Partial<SignUpData> {
   name: string;
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   address: string;
   state: string;
   city: string;
-  zipcode: string;
+  zipCode: string;
   mobileNumber: string;
 }
 
@@ -24,7 +24,7 @@ export interface ShoppingApiClient {
 class PlaywrightShoppingApiClient implements ShoppingApiClient {
   constructor(
     private readonly request: APIRequestContext,
-    private readonly baseUrl: string = url
+    private readonly baseUrl: string = url as string
   ) {}
 
   async verifyLogin(email: string, password: string) {
@@ -55,10 +55,4 @@ export const verifyLogin = async ({ request, email, password }: { request: APIRe
 export const addItemToCartViaAPI = async ({ request, itemId }: { request: APIRequestContext; itemId: number }) => {
   const client = createShoppingApiClient(request);
   return client.addItemToCart(itemId);
-};
-
-module.exports = {
-  createShoppingApiClient,
-  verifyLogin,
-  addItemToCartViaAPI,
 };

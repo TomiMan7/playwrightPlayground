@@ -130,7 +130,10 @@ playwrightPlayground/
 ├── tests/
 │   ├── practice1/            # API test suites
 │   │   └── api.spec.ts
-│   └── practice2/            # UI test suites
+│   ├── practice2/            # UI test suites
+│   │   └── ui.spec.ts
+│   └── setup/                # UI auth setup
+│       └── auth.setup.spec.ts
 ├── .env                      # Environment variables (git-ignored)
 ├── .gitignore
 ├── .prettierignore
@@ -160,19 +163,20 @@ npm run test:ui
 
 ## Scripts
 
-| Script                    | Description                                   |
-| ------------------------- | --------------------------------------------- |
-| `npm run lint`            | Lint the entire codebase                      |
-| `npm run lint:fix`        | Lint and automatically fix issues             |
-| `npm run format`          | Format the codebase with Prettier             |
-| `npm run format:check`    | Check code formatting without making changes  |
-| `npm run config`          | Set the Playwright config path                |
-| `npm test`                | Run all Playwright tests using the config     |
-| `npm run test:api`        | Run API tests (`tests/practice1/api.spec.ts`) |
-| `npm run test:ui`         | Run UI tests (`tests/practice2/ui.spec.ts`)   |
-| `npm run prepare`         | Set up Husky git hooks                        |
-| `npm run allure:generate` | Generate an Allure report from test results   |
-| `npm run allure:open`     | Open the generated Allure report              |
+| Script                    | Description                                         |
+| ------------------------- | --------------------------------------------------- |
+| `npm run lint`            | Lint the entire codebase                            |
+| `npm run lint:fix`        | Lint and automatically fix issues                   |
+| `npm run format`          | Format the codebase with Prettier                   |
+| `npm run format:check`    | Check code formatting without making changes        |
+| `npm run config`          | Set the Playwright config path                      |
+| `npm test`                | Run all Playwright tests using the config           |
+| `npm run test:api`        | Run API tests (`tests/practice1/api.spec.ts`)       |
+| `npm run test:ui`         | Run UI tests (`tests/practice2/ui.spec.ts`)         |
+| `npm run test:setup:ui`   | Run UI auth setup(`tests/setup/auth.setup.spec.ts`) |
+| `npm run prepare`         | Set up Husky git hooks                              |
+| `npm run allure:generate` | Generate an Allure report from test results         |
+| `npm run allure:open`     | Open the generated Allure report                    |
 
 ---
 

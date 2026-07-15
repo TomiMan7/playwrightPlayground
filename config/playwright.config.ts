@@ -45,7 +45,12 @@ export default defineConfig({
       testDir: resolve(__dirname, '..', 'tests', 'practice1'),
     },
     {
+      name: 'setup',
+      testDir: resolve(__dirname, '..', 'tests', 'setup'),
+    },
+    {
       name: 'ui',
+      dependencies: ['setup'],
       testDir: resolve(__dirname, '..', 'tests', 'practice2'),
       use: { ...devices['Desktop Chrome'] },
     },

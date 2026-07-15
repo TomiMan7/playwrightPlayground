@@ -4,12 +4,12 @@ export interface SignUpData {
   name: string;
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   address: string;
   state: string;
   city: string;
-  zipcode: string;
+  zipCode: string;
   mobileNumber: string;
 }
 
@@ -19,12 +19,12 @@ export class SignUpDataFactory {
       name: faker.person.fullName(),
       email: faker.internet.email(),
       password: faker.internet.password({ length: 12 }),
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
       address: faker.location.streetAddress(true),
       state: faker.location.state(),
       city: faker.location.city(),
-      zipcode: faker.location.zipCode(),
+      zipCode: faker.location.zipCode(),
       mobileNumber: faker.string.numeric(10),
       ...overrides,
     };

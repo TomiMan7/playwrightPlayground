@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
-import { /*addItemToCartViaAPI,*/ verifyLogin } from '../ui-layer/ui-service';
+import { /*addItemToCartViaAPI,*/ verifyLogin } from '../../src/ui/ui-service';
 import { ProductsCartPOM } from '../pom/product-page';
 import { faker } from '@faker-js/faker';
 import { ProductInfoPOM } from '../pom/product-detail-page';

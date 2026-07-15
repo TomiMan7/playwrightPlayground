@@ -4,12 +4,12 @@ export interface SignUpData {
   name: string;
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   address: string;
   state: string;
   city: string;
-  zipcode: string;
+  zipCode: string;
   mobileNumber: string;
 }
 
@@ -22,12 +22,12 @@ export class LoginSignUpPOM {
   private readonly signupButton: Locator;
   private readonly accountNameInput: Locator;
   private readonly passwordInput: Locator;
-  private readonly firstNameInput: Locator;
-  private readonly lastNameInput: Locator;
+  private readonly firstnameInput: Locator;
+  private readonly lastnameInput: Locator;
   private readonly addressInput: Locator;
   private readonly stateInput: Locator;
   private readonly cityInput: Locator;
-  private readonly zipcodeInput: Locator;
+  private readonly zipCodeInput: Locator;
   private readonly mobileNumberInput: Locator;
   private readonly createAccountButton: Locator;
   private readonly accountCreatedText: Locator;
@@ -47,16 +47,16 @@ export class LoginSignUpPOM {
       exact: true,
     });
     this.passwordInput = page.getByRole('textbox', { name: 'Password *' });
-    this.firstNameInput = page.getByRole('textbox', {
+    this.firstnameInput = page.getByRole('textbox', {
       name: 'First name *',
     });
-    this.lastNameInput = page.getByRole('textbox', { name: 'Last name *' });
+    this.lastnameInput = page.getByRole('textbox', { name: 'Last name *' });
     this.addressInput = page.getByRole('textbox', {
       name: 'Address * (Street address, P.',
     });
     this.stateInput = page.getByRole('textbox', { name: 'State *' });
     this.cityInput = page.getByRole('textbox', { name: 'City *' });
-    this.zipcodeInput = page.locator('#zipcode');
+    this.zipCodeInput = page.locator('#zipcode');
     this.mobileNumberInput = page.getByRole('textbox', {
       name: 'Mobile Number *',
     });
@@ -107,12 +107,12 @@ export class LoginSignUpPOM {
   async fillAccountDetails(data: SignUpData): Promise<void> {
     await this.fillField(this.accountNameInput, data.name);
     await this.fillField(this.passwordInput, data.password);
-    await this.fillField(this.firstNameInput, data.firstName);
-    await this.fillField(this.lastNameInput, data.lastName);
+    await this.fillField(this.firstnameInput, data.firstname);
+    await this.fillField(this.lastnameInput, data.lastname);
     await this.fillField(this.addressInput, data.address);
     await this.fillField(this.stateInput, data.state);
     await this.fillField(this.cityInput, data.city);
-    await this.fillField(this.zipcodeInput, data.zipcode);
+    await this.fillField(this.zipCodeInput, data.zipCode);
     await this.fillField(this.mobileNumberInput, data.mobileNumber);
     await this.clickElement(this.createAccountButton);
   }

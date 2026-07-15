@@ -1,6 +1,6 @@
 import { test as setup } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
-import { SignUpDataFactory } from '../test-data/ui-sign-up-data-factory';
+import { SignUpDataFactory } from '../../src/test-data/ui-sign-up-data-factory';
 import { LoginSignUpPOM } from '../pom/login-sign-up';
 
 setup('Setup for the auth tests', async ({ page, context }) => {
