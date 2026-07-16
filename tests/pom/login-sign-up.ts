@@ -16,7 +16,6 @@ export interface SignUpData {
 export class LoginSignUpPOM {
   readonly page: Page;
 
-  // Signup form locators (kept private for encapsulation)
   private readonly signupNameInput: Locator;
   private readonly signupEmailInput: Locator;
   private readonly signupButton: Locator;
@@ -38,7 +37,6 @@ export class LoginSignUpPOM {
   constructor(page: Page) {
     this.page = page;
 
-    // Initialize locators
     this.signupNameInput = page.getByRole('textbox', { name: 'Name' });
     this.signupEmailInput = page.locator('form').filter({ hasText: 'Signup' }).getByPlaceholder('Email Address');
     this.signupButton = page.getByRole('button', { name: 'Signup' });
@@ -70,7 +68,8 @@ export class LoginSignUpPOM {
   }
 
   async gotoLoginPage() {
-    await this.page.goto('https://automationexercise.com/login');
+    const url = process.env.UI_URL;
+    await this.page.goto(url + '/login');
   }
 
   async fillField(locator: Locator, text: string): Promise<void> {
@@ -91,14 +90,14 @@ export class LoginSignUpPOM {
     }
   }
 
-  async handleConsent(isCI: boolean): Promise<void> {
+  async handleCookieConsent(isCI: boolean): Promise<void> {
     if (!isCI) {
       await this.consentButton.waitFor({ state: 'visible' });
       await this.clickElement(this.consentButton);
     }
   }
 
-  async initialSignup(name: string, email: string): Promise<void> {
+  async signupUser(name: string, email: string): Promise<void> {
     await this.fillField(this.signupNameInput, name);
     await this.fillField(this.signupEmailInput, email);
     await this.clickElement(this.signupButton);
@@ -114,7 +113,6 @@ export class LoginSignUpPOM {
     await this.fillField(this.cityInput, data.city);
     await this.fillField(this.zipCodeInput, data.zipCode);
     await this.fillField(this.mobileNumberInput, data.mobileNumber);
-    await this.clickElement(this.createAccountButton);
   }
 
   async verifyAndContinue(): Promise<void> {
@@ -127,16 +125,17 @@ export class LoginSignUpPOM {
 
   async completeSignup(data: SignUpData, isCI: boolean): Promise<void> {
     await this.gotoLoginPage();
-    await this.handleConsent(isCI);
-    await this.initialSignup(data.name, data.email);
+    await this.handleCookieConsent(isCI);
+    await this.signupUser(data.name, data.email);
     await this.fillAccountDetails(data);
+    await this.clickElement(this.createAccountButton);
     await this.verifyAndContinue();
     await this.closeAdIfVisible();
   }
 
   async goToLoginWithoutAuth(isCI: boolean): Promise<void> {
     await this.gotoLoginPage();
-    await this.handleConsent(isCI);
+    await this.handleCookieConsent(isCI);
     await this.closeAdIfVisible();
   }
 }

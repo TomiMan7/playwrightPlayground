@@ -28,7 +28,7 @@ export class CartPagePOM {
     return this.registerPopupButton;
   }
 
-  async validateCartItem(value: string): Promise<boolean> {
+  async validateCartItemVisibility(value: string): Promise<boolean> {
     return this.page
       .getByRole('heading', { name: value })
       .isVisible()

@@ -1,12 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../src/fixtures/fixtures';
 import { readFile } from 'node:fs/promises';
 import { /*addItemToCartViaAPI,*/ verifyLogin } from '../../src/ui/ui-service';
-import { ProductsCartPOM } from '../pom/product-page';
-import { faker } from '@faker-js/faker';
-import { ProductInfoPOM } from '../pom/product-detail-page';
-import { CheckoutPagePOM } from '../pom/checkout-page';
-import { LoginSignUpPOM } from '../pom/login-sign-up';
-import { CartPagePOM } from '../pom/cart-page';
+import { StatusCodes } from 'http-status-codes';
+import { SignUpDataFactory } from '../../src/test-data/ui-sign-up-data-factory';
 
 test.describe('auth tests', () => {
   test.use({ storageState: '.customerAuth.json' });
@@ -22,19 +18,18 @@ test.describe('auth tests', () => {
     });
     const verificationBody = await verificationResponse.json();
 
-    expect(verificationBody.responseCode).toBe(200);
+    expect(verificationBody.responseCode).toBe(StatusCodes.OK);
     expect(verificationBody.message).toMatch('User exists!');
   });
 
   /*
     Blocked by cloudeflare
 
-  test('Add items to cart via API validate them on UI', async ({ request, page }) => {
+  test('Add items to cart via API validate them on UI', async ({ request, page, productsPage, }) => {
 
-    const itemId1 = faker.number.int({ min: 1, max: 10 });
-    const itemId2 = faker.number.int({ min: 11, max: 20 });
-
-    const productsPage = new ProductsCartPOM(page);
+    const itemId1 = SignUpDataFactory.createProductId(2, 3);
+    const itemId2 = SignUpDataFactory.createProductId(4, 6);
+    
     await productsPage.gotoProductsPage();
 
     await addItemToCartViaAPI({ request, itemId: itemId1 });
@@ -47,41 +42,32 @@ test.describe('auth tests', () => {
   });
   */
 
-  test('Add items to cart, via ui, then validate them on the checkout page', async ({ page }) => {
-    const itemId1 = faker.number.int({ min: 2, max: 3 });
-    const itemId2 = faker.number.int({ min: 4, max: 6 });
+  test('Add items to cart, via ui, then validate them on the checkout page', async ({ page, productsPage, productInfoPage, checkoutPage, cartPage }) => {
+    const itemId1 = SignUpDataFactory.createProductId(1, 3);
+    const itemId2 = SignUpDataFactory.createProductId(4, 6);
 
-    const productsPage = new ProductsCartPOM(page);
-    const productInfoPage = new ProductInfoPOM(page);
-    const checkoutPage = new CheckoutPagePOM(page);
-    const cartPage = new CartPagePOM(page);
     await productsPage.goToSpecificProductInfoPageAndCloseAdIfVisible(itemId1);
     const productName1 = await productInfoPage.addProductToCartAndReturnItsName();
 
     await productsPage.goToSpecificProductInfoPageAndCloseAdIfVisible(itemId2);
     const productName2 = await productInfoPage.addProductToCartAndReturnItsName();
 
-    await productsPage.goToCart();
+    await productsPage.goToCartPage();
     await expect(cartPage.returnProceedToCheckoutButton()).toBeVisible();
     await cartPage.returnProceedToCheckoutButton().click();
 
-    expect(await checkoutPage.validateCartItem(productName1 as string)).toBe(true);
-    expect(await checkoutPage.validateCartItem(productName2 as string)).toBe(true);
+    expect(await checkoutPage.validateCartItemVisibility(productName1 as string)).toBe(true);
+    expect(await checkoutPage.validateCartItemVisibility(productName2 as string)).toBe(true);
     expect(await checkoutPage.returnCartItemQuantity(itemId1, page)).toBe('1');
     expect(await checkoutPage.returnCartItemQuantity(itemId2, page)).toBe('1');
   });
 });
 
 test.describe('unauth tests', () => {
-  test('Add items to cart, via ui, then validate them on the checkout page', async ({ page }) => {
-    const itemId1 = faker.number.int({ min: 2, max: 3 });
-    const itemId2 = faker.number.int({ min: 4, max: 6 });
+  test('Add items to cart, via ui, then validate them on the checkout page', async ({ page, productsPage, productInfoPage, loginPage, cartPage }) => {
+    const itemId1 = SignUpDataFactory.createProductId(2, 3);
+    const itemId2 = SignUpDataFactory.createProductId(4, 6);
     const isCI = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
-
-    const productsPage = new ProductsCartPOM(page);
-    const productInfoPage = new ProductInfoPOM(page);
-    const loginPage = new LoginSignUpPOM(page);
-    const cartPage = new CartPagePOM(page);
 
     await loginPage.goToLoginWithoutAuth(isCI);
 
@@ -93,9 +79,9 @@ test.describe('unauth tests', () => {
     await productsPage.goToSpecificProductInfoPageAndCloseAdIfVisible(itemId2);
     const productName2 = await productInfoPage.addProductToCartAndReturnItsName();
 
-    await productsPage.goToCart();
-    expect(await cartPage.validateCartItem(productName1)).toBe(true);
-    expect(await cartPage.validateCartItem(productName2)).toBe(true);
+    await productsPage.goToCartPage();
+    expect(await cartPage.validateCartItemVisibility(productName1)).toBe(true);
+    expect(await cartPage.validateCartItemVisibility(productName2)).toBe(true);
     expect(await cartPage.returnCartItemQuantity(itemId1, page)).toBe('1');
     expect(await cartPage.returnCartItemQuantity(itemId2, page)).toBe('1');
 

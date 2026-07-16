@@ -29,4 +29,8 @@ export class SignUpDataFactory {
       ...overrides,
     };
   }
+
+  static createProductId(min: number, max: number) {
+    return faker.number.int({ min: min, max: max });
+  }
 }
