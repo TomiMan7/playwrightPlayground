@@ -4,6 +4,7 @@ import {
   createBookingApiClient,
   BookingApiClientInterface,
 } from '../api/api-service';
+import { requireEnv } from '../utils/env';
 
 type Fixtures = {
   token: string;
@@ -14,16 +15,15 @@ export const test = base.extend<Fixtures>({
   token: async ({ request }, use) => {
     const response = await createToken({
       request,
-      username: process.env.API_USERNAME as string,
-      password: process.env.API_PASSWORD as string,
+      username: requireEnv('API_USERNAME'),
+      password: requireEnv('API_PASSWORD'),
     });
     const body = await response.json();
     await use(body.token);
   },
 
   api: async ({ request }, use) => {
-    const api = createBookingApiClient(request);
-    await use(api);
+    await use(createBookingApiClient(request));
   },
 });
 
