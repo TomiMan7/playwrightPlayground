@@ -1,4 +1,4 @@
-import { test, expect } from '../../src/fixtures/auth';
+import { test, expect } from '../../src/fixtures/index';
 import { StatusCodes } from 'http-status-codes';
 import { BookingDataFactory } from '../../src/test-data/booking-data-factory';
 import { Logger } from '../../src/utils/logger';

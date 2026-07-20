@@ -34,7 +34,7 @@ class BookingApiClient implements BookingApiClientInterface {
   ) {}
 
   /**
-   *
+   * Creates an auth token for the given user credentials
    * @param username username for the user
    * @param password password for the user
    * @returns auth token for that user
@@ -52,7 +52,7 @@ class BookingApiClient implements BookingApiClientInterface {
   }
 
   /**
-   *
+   * Pings the server to check availability
    * @returns pings the server for availability
    */
   async ping() {
@@ -60,7 +60,7 @@ class BookingApiClient implements BookingApiClientInterface {
   }
 
   /**
-   *
+   * Retrieves all available bookings
    * @returns all the available bookings
    */
   async getAllBookings() {
@@ -68,7 +68,7 @@ class BookingApiClient implements BookingApiClientInterface {
   }
 
   /**
-   *
+   * Retrieves bookings matching the provided owner name
    * @param firstName first name of the booking owner
    * @param lastName last name of the booking owner
    * @returns bookings matching the provided name
@@ -80,7 +80,7 @@ class BookingApiClient implements BookingApiClientInterface {
   }
 
   /**
-   *
+   * Retrieves booking details for the given booking ID
    * @param bookingId booking identifier to retrieve
    * @returns booking details for the given booking ID
    */
@@ -89,7 +89,7 @@ class BookingApiClient implements BookingApiClientInterface {
   }
 
   /**
-   *
+   * Creates a new booking with the provided details
    * @param payload booking details to create
    * @returns created booking response
    */
@@ -103,7 +103,7 @@ class BookingApiClient implements BookingApiClientInterface {
   }
 
   /**
-   *
+   * Updates an existing booking with the provided details
    * @param bookingId booking identifier to update
    * @param token authentication token for the update
    * @param payload updated booking details
@@ -124,7 +124,7 @@ class BookingApiClient implements BookingApiClientInterface {
   }
 
   /**
-   *
+   * Deletes the booking with the given booking ID
    * @param bookingId booking identifier to delete
    * @param token authentication token for the deletion
    * @returns deletion response for the booking
@@ -139,7 +139,7 @@ class BookingApiClient implements BookingApiClientInterface {
   }
 
   /**
-   *
+   * Normalizes the booking payload into the shape expected by the API
    * @param payload booking payload to transform for the API
    * @returns normalized booking payload for the API request
    */
@@ -159,7 +159,7 @@ class BookingApiClient implements BookingApiClientInterface {
 }
 
 /**
- *
+ * Creates a configured booking API client
  * @param request Playwright API request context
  * @returns configured booking API client
  */
@@ -168,7 +168,7 @@ export const createBookingApiClient = (
 ): BookingApiClient => new BookingApiClient(request);
 
 /**
- *
+ * Creates an auth token for the given user via the booking API client
  * @param request Playwright API request context
  * @param username username for the user
  * @param password password for the user
