@@ -21,7 +21,7 @@ export interface ShoppingApiClient {
   addItemToCart(itemId: number): Promise<APIResponse>;
 }
 
-class PlaywrightShoppingApiClient implements ShoppingApiClient {
+class shoppingApi implements ShoppingApiClient {
   constructor(
     private readonly request: APIRequestContext,
     private readonly baseUrl: string = url as string
@@ -61,7 +61,7 @@ class PlaywrightShoppingApiClient implements ShoppingApiClient {
  * @param request - API request context used to make HTTP calls
  * @returns a ShoppingApiClient for interacting with the shopping API
  */
-export const createShoppingApiClient = (request: APIRequestContext): ShoppingApiClient => new PlaywrightShoppingApiClient(request);
+export const createShoppingApiClient = (request: APIRequestContext): ShoppingApiClient => new shoppingApi(request);
 
 /**
  * Returns the login state of a given user

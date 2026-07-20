@@ -6,6 +6,7 @@ export class ProductsCartPOM {
   private readonly productInfo: Locator;
   private readonly adFrame: FrameLocator;
   private readonly closeAdButton: Locator;
+  private readonly url: string;
 
   constructor(page: Page) {
     this.page = page;
@@ -13,6 +14,7 @@ export class ProductsCartPOM {
     this.productInfo = page.getByText('View Product');
     this.adFrame = page.frameLocator('iframe[name="aswift_3"]');
     this.closeAdButton = this.adFrame.getByRole('button', { name: 'Close ad' });
+    this.url = process.env.UI_URL as string;
   }
   /**
    * Closes the ad popup if it is currently visible
@@ -24,8 +26,7 @@ export class ProductsCartPOM {
   }
 
   async gotoProductsPage(): Promise<void> {
-    const url = process.env.UI_URL;
-    await this.page.goto(url + '/products');
+    await this.page.goto(this.url + '/products');
   }
 
   async clickElement(locator: Locator): Promise<void> {
@@ -44,7 +45,7 @@ export class ProductsCartPOM {
   }
 
   async goToCartPage(): Promise<void> {
-    await this.clickElement(this.cartLink);
+    await this.page.goto(this.url + '/view_cart');
   }
 
   /**

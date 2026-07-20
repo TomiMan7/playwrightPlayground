@@ -23,22 +23,17 @@ test.describe('auth tests', () => {
   });
 
   /*
-    Blocked by cloudeflare
-
-  test('Add items to cart via API validate them on UI', async ({ request, page, productsPage, }) => {
+  test('Add items to cart via API validate them on UI', async ({ request, productsPage, }) => {
 
     const itemId1 = SignUpDataFactory.createProductId(2, 3);
     const itemId2 = SignUpDataFactory.createProductId(4, 6);
-    
-    await productsPage.gotoProductsPage();
 
+    //Blocked by cloudeflare
     await addItemToCartViaAPI({ request, itemId: itemId1 });
     await addItemToCartViaAPI({ request, itemId: itemId2 });
-    await productsPage.goToCart();
 
-    await expect(productsPage.checkRemoveElementAttribute(itemId1)).resolves.toBe(true);
-    await expect(productsPage.checkRemoveElementAttribute(itemId2)).resolves.toBe(true);
-    await expect(productsPage.proceedToCheckout()).toBeVisible();
+    await productsPage.goToCartPage();
+    //add checks if workaround is found
   });
   */
 
@@ -71,9 +66,7 @@ test.describe('unauth tests', () => {
 
     await loginPage.goToLoginWithoutAuth(isCI);
 
-    //adding item to cart based on its ID.
     await productsPage.goToSpecificProductInfoPageAndCloseAdIfVisible(itemId1);
-    //returning the name of the product
     const productName1 = await productInfoPage.addProductToCartAndReturnItsName();
 
     await productsPage.goToSpecificProductInfoPageAndCloseAdIfVisible(itemId2);
