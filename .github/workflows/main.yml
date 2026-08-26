@@ -71,7 +71,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests (sharded)
-        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npx playwright test --config=config/playwright.config.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Upload Allure results
         if: ${{ !cancelled() }}
@@ -92,8 +92,8 @@ jobs:
   allure-report:
     name: Generate & Publish Allure Report
     needs: test
-    # Only run for main, service, and ui branches
-    if: ${{ !cancelled() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/service' || github.ref == 'refs/heads/ui') }}
+    # Only run for master, service, and ui branches
+    if: ${{ !cancelled() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/service' || github.ref == 'refs/heads/ui') }}
     runs-on: ubuntu-latest
     environment:
       name: gh-pages
