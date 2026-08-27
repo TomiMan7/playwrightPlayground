@@ -1,4 +1,4 @@
-import { test, expect } from '../../src/fixtures/index';
+import { test, expect } from '../../src/fixtures/api';
 import { StatusCodes } from 'http-status-codes';
 import { BookingDataFactory } from '../../src/test-data/booking-data-factory';
 import { Logger } from '../../src/utils/logger';
@@ -32,7 +32,7 @@ test.describe('GET API Tests', () => {
 });
 
 test.describe('POST API Tests', () => {
-  test('POST /booking', async ({ api, token }) => {
+  test('POST /booking', async ({ api }) => {
     const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
@@ -43,16 +43,13 @@ test.describe('POST API Tests', () => {
     expect(typeof responseBody.bookingid).toBe('number');
     expect(response.status()).toBe(StatusCodes.OK);
 
-    const deleteResponse = await api.deleteBooking(
-      responseBody.bookingid,
-      token
-    );
+    const deleteResponse = await api.deleteBooking(responseBody.bookingid);
     expect(deleteResponse.status()).toBe(StatusCodes.CREATED); //cleaning up
   });
 });
 
 test.describe('PUT API Tests', () => {
-  test('PUT /booking', async ({ api, token }) => {
+  test('PUT /booking', async ({ api }) => {
     const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
@@ -69,7 +66,6 @@ test.describe('PUT API Tests', () => {
 
     const updateResponse = await api.updateBooking(
       responseBody.bookingid,
-      token,
       updatedBookingData
     );
     const updateResponseBody = await updateResponse.json();
@@ -83,16 +79,13 @@ test.describe('PUT API Tests', () => {
     );
     expect(updateResponse.status()).toBe(StatusCodes.OK);
 
-    const deleteResponse = await api.deleteBooking(
-      responseBody.bookingid,
-      token
-    );
+    const deleteResponse = await api.deleteBooking(responseBody.bookingid);
     expect(deleteResponse.status()).toBe(StatusCodes.CREATED); //cleaning up
   });
 });
 
 test.describe('DELETE API Tests', () => {
-  test('DELETE /booking', async ({ api, token }) => {
+  test('DELETE /booking', async ({ api }) => {
     const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
@@ -105,10 +98,7 @@ test.describe('DELETE API Tests', () => {
       bookingData.additionalNeeds
     );
 
-    const deleteResponse = await api.deleteBooking(
-      responseBody.bookingid,
-      token
-    );
+    const deleteResponse = await api.deleteBooking(responseBody.bookingid);
 
     logger.info('Delete Response Status:', deleteResponse.status());
 
@@ -121,49 +111,39 @@ test.describe('DELETE API Tests', () => {
 });
 
 test.describe('NEGATIVE API Tests', () => {
-  test('update booking with invalid name', async ({ api, token }) => {
+  test('update booking with invalid name', async ({ api }) => {
     const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
 
-    const updateResponse = await api.updateBooking(
-      responseBody.bookingid,
-      token,
-      {
-        firstname: 777 as unknown as string,
-      }
-    );
+    const updateResponse = await api.updateBooking(responseBody.bookingid, {
+      firstname: 777 as unknown as string,
+    });
     logger.info(updateResponse);
     expect(updateResponse.status()).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
 
-    const deleteResponse = await api.deleteBooking(
-      responseBody.bookingid,
-      token
-    );
+    const deleteResponse = await api.deleteBooking(responseBody.bookingid);
     expect(deleteResponse.status()).toBe(StatusCodes.CREATED); //cleaning up
   });
 
-  test('update booking with invalid token', async ({ api, token }) => {
+  test('update booking with invalid token', async ({ api }) => {
     const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
 
     const updateResponse = await api.updateBooking(
       responseBody.bookingid,
-      'invalidToken',
-      {}
+      {},
+      'invalidToken'
     );
     logger.info(updateResponse);
     expect(updateResponse.status()).toBe(StatusCodes.FORBIDDEN);
 
-    const deleteResponse = await api.deleteBooking(
-      responseBody.bookingid,
-      token
-    );
+    const deleteResponse = await api.deleteBooking(responseBody.bookingid);
     expect(deleteResponse.status()).toBe(StatusCodes.CREATED); //cleaning up
   });
 
-  test('delete booking with invalid token', async ({ api, token }) => {
+  test('delete booking with invalid token', async ({ api }) => {
     const bookingData = BookingDataFactory.createBookingData();
     const response = await api.createBooking(bookingData);
     const responseBody = await response.json();
@@ -175,18 +155,12 @@ test.describe('NEGATIVE API Tests', () => {
     logger.info(deleteResponse);
     expect(deleteResponse.status()).toBe(StatusCodes.FORBIDDEN);
 
-    const deleteResponse2 = await api.deleteBooking(
-      responseBody.bookingid,
-      token
-    );
+    const deleteResponse2 = await api.deleteBooking(responseBody.bookingid);
     expect(deleteResponse2.status()).toBe(StatusCodes.CREATED); //cleaning up
   });
 
-  test('delete booking with invalid id', async ({ api, token }) => {
-    const deleteResponse = await api.deleteBooking(
-      'asd' as unknown as number,
-      token
-    );
+  test('delete booking with invalid id', async ({ api }) => {
+    const deleteResponse = await api.deleteBooking('asd' as unknown as number);
     logger.info(deleteResponse);
     expect(deleteResponse.status()).toBe(StatusCodes.METHOD_NOT_ALLOWED);
   });

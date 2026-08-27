@@ -21,10 +21,13 @@ export interface BookingApiClientInterface {
   createBooking(payload: BookingPayload): Promise<APIResponse>;
   updateBooking(
     bookingId: number,
-    token: string,
-    payload: BookingPayload
+    payload: BookingPayload,
+    tokenOverride?: string
   ): Promise<APIResponse>;
-  deleteBooking(bookingId: number, token: string): Promise<APIResponse>;
+  deleteBooking(
+    bookingId: number,
+    tokenOverride?: string
+  ): Promise<APIResponse>;
 }
 
 class BookingApiClient implements BookingApiClientInterface {
@@ -103,39 +106,51 @@ class BookingApiClient implements BookingApiClientInterface {
   }
 
   /**
-   * Updates an existing booking with the provided details
+   * Updates an existing booking with the provided details.
+   * By default the authenticated token baked into the request context is used.
    * @param bookingId booking identifier to update
-   * @param token authentication token for the update
    * @param payload updated booking details
+   * @param tokenOverride optional token to override the default authenticated cookie
    * @returns updated booking response
    */
   async updateBooking(
     bookingId: number,
-    token: string,
-    payload: BookingPayload
+    payload: BookingPayload,
+    tokenOverride?: string
   ) {
     return this.request.put(this.baseUrl + `/booking/${bookingId}`, {
       headers: {
         'Content-Type': 'application/json',
-        Cookie: `token=${token}`,
+        ...this.buildAuthHeader(tokenOverride),
       },
       data: this.buildBookingPayload(payload),
     });
   }
 
   /**
-   * Deletes the booking with the given booking ID
+   * Deletes the booking with the given booking ID.
+   * By default the authenticated token baked into the request context is used.
    * @param bookingId booking identifier to delete
-   * @param token authentication token for the deletion
+   * @param tokenOverride optional token to override the default authenticated cookie
    * @returns deletion response for the booking
    */
-  async deleteBooking(bookingId: number, token: string) {
+  async deleteBooking(bookingId: number, tokenOverride?: string) {
     return this.request.delete(this.baseUrl + `/booking/${bookingId}`, {
       headers: {
         'Content-Type': 'application/json',
-        Cookie: `token=${token}`,
+        ...this.buildAuthHeader(tokenOverride),
       },
     });
+  }
+
+  /**
+   * Builds an auth header only when a token override is provided.
+   * When omitted, the token baked into the request context (extraHTTPHeaders) is used.
+   * @param tokenOverride optional token to override the default authenticated cookie
+   * @returns a Cookie header object when overriding, otherwise an empty object
+   */
+  private buildAuthHeader(tokenOverride?: string) {
+    return tokenOverride ? { Cookie: `token=${tokenOverride}` } : {};
   }
 
   /**
