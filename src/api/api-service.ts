@@ -1,4 +1,4 @@
-import { APIRequestContext, APIResponse } from '@playwright/test';
+import { APIRequestContext } from '@playwright/test';
 
 const url = process.env.API_URL;
 
@@ -12,25 +12,7 @@ export interface BookingPayload {
   additionalNeeds?: string;
 }
 
-export interface BookingApiClientInterface {
-  createToken(username: string, password: string): Promise<APIResponse>;
-  ping(): Promise<APIResponse>;
-  getAllBookings(): Promise<APIResponse>;
-  getBookingByName(firstName: string, lastName: string): Promise<APIResponse>;
-  getBookingById(bookingId: number): Promise<APIResponse>;
-  createBooking(payload: BookingPayload): Promise<APIResponse>;
-  updateBooking(
-    bookingId: number,
-    payload: BookingPayload,
-    tokenOverride?: string
-  ): Promise<APIResponse>;
-  deleteBooking(
-    bookingId: number,
-    tokenOverride?: string
-  ): Promise<APIResponse>;
-}
-
-class BookingApiClient implements BookingApiClientInterface {
+export class BookingApiClient {
   constructor(
     private readonly request: APIRequestContext,
     private readonly baseUrl: string = url as string
@@ -44,9 +26,6 @@ class BookingApiClient implements BookingApiClientInterface {
    */
   async createToken(username: string, password: string) {
     return this.request.post(this.baseUrl + '/auth', {
-      headers: {
-        'Content-Type': 'application/json',
-      },
       data: {
         username,
         password,
@@ -98,9 +77,6 @@ class BookingApiClient implements BookingApiClientInterface {
    */
   async createBooking(payload: BookingPayload) {
     return this.request.post(this.baseUrl + '/booking', {
-      headers: {
-        'Content-Type': 'application/json',
-      },
       data: this.buildBookingPayload(payload),
     });
   }
@@ -119,10 +95,7 @@ class BookingApiClient implements BookingApiClientInterface {
     tokenOverride?: string
   ) {
     return this.request.put(this.baseUrl + `/booking/${bookingId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.buildAuthHeader(tokenOverride),
-      },
+      headers: this.buildAuthHeader(tokenOverride),
       data: this.buildBookingPayload(payload),
     });
   }
@@ -136,10 +109,7 @@ class BookingApiClient implements BookingApiClientInterface {
    */
   async deleteBooking(bookingId: number, tokenOverride?: string) {
     return this.request.delete(this.baseUrl + `/booking/${bookingId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.buildAuthHeader(tokenOverride),
-      },
+      headers: this.buildAuthHeader(tokenOverride),
     });
   }
 
@@ -172,32 +142,3 @@ class BookingApiClient implements BookingApiClientInterface {
     };
   }
 }
-
-/**
- * Creates a configured booking API client
- * @param request Playwright API request context
- * @returns configured booking API client
- */
-export const createBookingApiClient = (
-  request: APIRequestContext
-): BookingApiClient => new BookingApiClient(request);
-
-/**
- * Creates an auth token for the given user via the booking API client
- * @param request Playwright API request context
- * @param username username for the user
- * @param password password for the user
- * @returns authentication response for the user
- */
-export const createToken = async ({
-  request,
-  username,
-  password,
-}: {
-  request: APIRequestContext;
-  username: string;
-  password: string;
-}) => {
-  const client = createBookingApiClient(request);
-  return client.createToken(username, password);
-};

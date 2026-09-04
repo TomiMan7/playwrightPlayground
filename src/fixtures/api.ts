@@ -1,23 +1,18 @@
 import { test as base } from '@playwright/test';
-import {
-  createBookingApiClient,
-  BookingApiClientInterface,
-} from '../api/api-service';
-import { createToken } from '../api/api-service';
+import { BookingApiClient } from '../api/api-service';
 import { requireEnv } from '../utils/env';
 
 type Fixtures = {
-  api: BookingApiClientInterface;
+  api: BookingApiClient;
 };
 
 export const test = base.extend<Fixtures>({
   api: async ({ playwright }, use) => {
     const authContext = await playwright.request.newContext();
-    const tokenResponse = await createToken({
-      request: authContext,
-      username: requireEnv('API_USERNAME'),
-      password: requireEnv('API_PASSWORD'),
-    });
+    const tokenResponse = await new BookingApiClient(authContext).createToken(
+      requireEnv('API_USERNAME'),
+      requireEnv('API_PASSWORD')
+    );
     const { token } = await tokenResponse.json();
     await authContext.dispose();
 
@@ -28,7 +23,7 @@ export const test = base.extend<Fixtures>({
       },
     });
 
-    await use(createBookingApiClient(apiContext));
+    await use(new BookingApiClient(apiContext));
     await apiContext.dispose();
   },
 });
